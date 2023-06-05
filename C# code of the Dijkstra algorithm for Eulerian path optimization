@@ -1,0 +1,86 @@
+using System;
+using System.Collections.Generic;
+
+public class Graph
+{
+    private int vertices; // Number of vertices in the graph 图中顶点的数量
+    private List<int>[] adjacencyList; // Graph represented by adjacency table 邻接表表示的图
+
+    public Graph(int v)
+    {
+        vertices = v;
+        adjacencyList = new List<int>[v];
+        for (int i = 0; i < v; i++)
+        {
+            adjacencyList[i] = new List<int>();
+        }
+    }
+
+    public void AddEdge(int source, int destination)
+    {
+        adjacencyList[source].Add(destination);
+        adjacencyList[destination].Add(source);
+    }
+
+    public List<int> FindEulerPath()
+    {
+        List<int> path = new List<int>();
+
+        // Initialize the array of visit markers 初始化访问标记数组
+        bool[] visited = new bool[vertices];
+        for (int i = 0; i < vertices; i++)
+        {
+            visited[i] = false;
+        }
+
+        // Traverse from vertex 0从顶点0开始遍历
+        DFS(0, visited, path);
+
+        return path;
+    }
+
+    private void DFS(int vertex, bool[] visited, List<int> path)
+    {
+        visited[vertex] = true;
+
+        foreach (int neighbor in adjacencyList[vertex])
+        {
+            if (!visited[neighbor])
+            {
+                DFS(neighbor, visited, path);
+
+                // Add path 添加边到路径
+                path.Add(vertex);
+                path.Add(neighbor);
+            }
+        }
+    }
+}
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        // Creat graph创建图实例
+        Graph graph = new Graph(6);
+
+        // Add Edge 添加边
+        graph.AddEdge(0, 1);
+        graph.AddEdge(1, 2);
+        graph.AddEdge(2, 3);
+        graph.AddEdge(3, 4);
+        graph.AddEdge(4, 5);
+        graph.AddEdge(5, 0);
+
+        // Retrieve Eulerian loop 查找欧拉回路
+        List<int> eulerPath = graph.FindEulerPath();
+
+        // Output 输出结果
+        Console.WriteLine("欧拉回路:");
+        foreach (int vertex in eulerPath)
+        {
+            Console.Write(vertex + " ");
+        }
+        Console.WriteLine();
+    }
+}
